@@ -1,7 +1,6 @@
 import UserModel from "@/app/model/User";
 import dbConnect from "@/lib/dbConnect";
 import { Message } from "@/app/model/User";
-import { Suspense } from "react";
 export async function POST(request: Request) {
     await dbConnect()
     const { username, content } = await request.json()
