@@ -4,22 +4,15 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/app/model/User";
 import { NextRequest, NextResponse } from "next/server";
 
-interface Params {
-  params: { messageid: string };
-}
-
-export async function DELETE(request: NextRequest, context: Params) {
-  const { messageid } = context.params;
+export async function DELETE(request: NextRequest, context: { params: Promise<{ messageid: string }> }) {
+  const { messageid } = await context.params; 
   await dbConnect();
 
   const session = await getServerSession(authOptions);
   const _user = session?.user as User | undefined;
 
   if (!session || !_user) {
-    return NextResponse.json(
-      { success: false, message: "Not authenticated" },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, message: "Not authenticated" }, { status: 401 });
   }
 
   try {
@@ -35,15 +28,9 @@ export async function DELETE(request: NextRequest, context: Params) {
       );
     }
 
-    return NextResponse.json(
-      { message: "Message deleted", success: true },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "Message deleted", success: true }, { status: 200 });
   } catch (error) {
     console.error("Error deleting message:", error);
-    return NextResponse.json(
-      { message: "Error deleting message", success: false },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Error deleting message", success: false }, { status: 500 });
   }
 }
